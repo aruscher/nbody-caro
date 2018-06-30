@@ -10,22 +10,22 @@
 #include <ostream>
 #include "Body.h"
 
-class System {
+class NBodySystem {
 
 public:
-    System();
+    NBodySystem();
 
     void addBody(Body b);
 
-    std::vector<Body> getContent();
-
-    friend std::ostream &operator<<(std::ostream &os, const System &system1);
+    friend std::ostream &operator<<(std::ostream &os, const NBodySystem &system1);
     //void generateRandomBody();
+
+    const std::vector<Body> &getSystemContent() const;
 
 
 private:
     std::vector<Body> systemContent;
-
+    int counter = 0;
 };
 
 

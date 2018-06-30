@@ -12,23 +12,41 @@ class Body {
 
 public:
     //Position
-    float px, py = 0.0f;
+    double px, py = 0;
     //Velocity
-    float vx, vy = 0.0f;
+    double vx, vy = 0;
     //Force
-    float fx, fy = 0.0f;
+    double fx, fy = 0;
     //Mass
-    float mass = 0.0f;
+    double mass = 0;
 
 
-    Body(float px, float py, float vx, float vy, float mass);
+    Body(double px, double py, double vx, double vy, double mass);
 
-    Body(float px, float py, float vx, float vy);
+    Body(double px, double py, double vx, double vy);
+
+    void setID(int id);
+
+    void update(double dt);
+
+
+    bool operator==(const Body &rhs) const;
+
+    bool operator!=(const Body &rhs) const;
+
+    bool operator<(const Body &rhs) const;
+
+    bool operator>(const Body &rhs) const;
+
+    bool operator<=(const Body &rhs) const;
+
+    bool operator>=(const Body &rhs) const;
 
     friend std::ostream &operator<<(std::ostream &os, const Body &body);
 
-    float distanceTo(Body body);
 
+private:
+    int id;
 };
 
 
