@@ -15,16 +15,16 @@ class NBodySystem {
 public:
     NBodySystem();
 
-    void addBody(Body b);
+    void addBody(Body *b);
 
     friend std::ostream &operator<<(std::ostream &os, const NBodySystem &system1);
     //void generateRandomBody();
 
-    const std::vector<Body> &getSystemContent() const;
+    const std::vector<Body*> &getSystemContent() const;
 
 
 private:
-    std::vector<Body> systemContent;
+    std::vector<Body *> systemContent;
     int counter = 0;
 };
 

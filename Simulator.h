@@ -29,9 +29,9 @@ public:
     void run(int steps, double dt) override;
 
 private:
-    double distanceBetween(Body b1, Body b2);
+    double distanceBetween(Body *b1, Body *b2);
 
-    std::vector<std::vector<Body>> interactionMatrix;
+    std::vector<std::vector<Body * >> interactionMatrix;
 
     void simulationStep(double dt);
 

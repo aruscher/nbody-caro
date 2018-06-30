@@ -11,14 +11,12 @@ int main() {
     NBodySystem sy;
     Body b1(0, 0, 0, 0);
     Body b2(0, 1, 0, 0);
-    sy.addBody(b1);
-    sy.addBody(b2);
+    sy.addBody(&b1);
+    sy.addBody(&b2);
 
     SequentialSimulator sim(sy);
 
-    sim.run(10, 10000);
-
-
+    sim.run(10000, 1);
 
 
     return 0;
