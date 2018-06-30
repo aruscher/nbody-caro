@@ -14,8 +14,8 @@ y_max = df["y"].max()
 
 
 
-ax = plt.axes(xlim=(x_min-1, x_max+1), ylim=(y_min-1, y_max+1))
-line, = ax.plot([], [], 'o', lw=2)
+ax = plt.axes(xlim=(x_min-10, x_max+10), ylim=(y_min-10, y_max+10))
+line, = ax.plot([], [], 'o', lw=1)
 frame_text = ax.text(0.05, 0.9, '', transform=ax.transAxes)
 frame_text.set_text("")
 
@@ -30,6 +30,6 @@ def animate(i):
 
 
 anim = animation.FuncAnimation(fig, animate, 
-                               frames=df["ts"].max(), interval=1, blit=True)
-#anim.save('basic_animation.mp4', fps=30, extra_args=['-vcodec', 'libx264'])
+                               frames=df["ts"].max(), interval=.5, blit=True)
+anim.save('basic_animation.mp4', fps=30, extra_args=['-vcodec', 'libx264'])
 plt.show()

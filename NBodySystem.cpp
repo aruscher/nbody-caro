@@ -6,7 +6,10 @@
 #include <chrono>
 #include "NBodySystem.h"
 
-NBodySystem::NBodySystem() = default;
+NBodySystem::NBodySystem() {
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    this->generator = std::default_random_engine(seed);
+}
 
 void NBodySystem::addBody(Body *b) {
     b->setID(this->counter);
@@ -34,17 +37,18 @@ const std::vector<Body *> &NBodySystem::getSystemContent() const {
 }
 
 void NBodySystem::addRandomBody(int id, double *xrange, double *yrange, double *vrange, double *massrange) {
-    unsigned seed = 10;
-    std::default_random_engine generator(seed);
+
 
     std::uniform_real_distribution<double> xSampler(xrange[0], xrange[1]);
     std::uniform_real_distribution<double> ySampler(yrange[0], yrange[1]);
     std::uniform_real_distribution<double> vSampler(vrange[0], vrange[1]);
     std::uniform_real_distribution<double> massSampler(massrange[0], massrange[1]);
 
-    Body generatedBody(xSampler(generator), ySampler(generator), vSampler(generator), vSampler(generator),
-                       massSampler(generator));
-    this->addBody(&generatedBody, id);
+    Body *generatedBody = new Body(xSampler(this->generator), ySampler(this->generator), vSampler(this->generator),
+                                   vSampler(this->generator),
+                                   massSampler(this->generator));
+    generatedBody->setID(id);
+    this->systemContent.push_back(generatedBody);
 
 }
 

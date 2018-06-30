@@ -21,10 +21,11 @@ void SequentialSimulator::run(int steps, double dt) {
     this->buildInteractionMatrix();
     this->trajectory.addEntry(0, this->getSystem());
     for (int i = 0; i < steps; i++) {
-        std::cout << "Begin Current system: " << this->getSystem() << std::endl;
+        std::cout << "Calculate " << i << "/" << steps << std::endl;
+//        std::cout << "Begin Current system: " << this->getSystem() << std::endl;
         this->simulationStep(dt);
-        std::cout << "End Current system: " << this->getSystem() << std::endl;
-        std::cout << "-----------------------------" << std::endl;
+//        std::cout << "End Current system: " << this->getSystem() << std::endl;
+//        std::cout << "-----------------------------" << std::endl;
         this->trajectory.addEntry(i + 1, this->getSystem());
     }
     this->trajectory.writeTrajectory();

@@ -8,15 +8,18 @@
 
 #include <vector>
 #include <ostream>
+#include <random>
 #include "Body.h"
 
 class NBodySystem {
 
 public:
+
     NBodySystem();
 
     void addBody(Body *b);
-    void addBody(Body *b,int id);
+
+    void addBody(Body *b, int id);
 
     friend std::ostream &operator<<(std::ostream &os, const NBodySystem &system1);
 
@@ -28,6 +31,8 @@ public:
 private:
     std::vector<Body *> systemContent;
     int counter = 0;
+    std::default_random_engine generator;
+
 
 };
 
