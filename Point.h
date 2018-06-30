@@ -6,6 +6,8 @@
 #define NBODY_CARO_POINT_H
 
 
+#include <ostream>
+
 class Point {
 public:
     Point(int id, double x, double y);
@@ -16,10 +18,12 @@ public:
 
     double getY() const;
 
-private:
+    friend std::ostream &operator<<(std::ostream &os, const Point &point);
+
     int id;
     double x;
     double y;
+
 };
 
 

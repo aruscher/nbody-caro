@@ -23,14 +23,15 @@ void SequentialSimulator::run(int steps, double dt) {
     int n = this->getSystem().getSystemContent().size();
     std::cout << "Run sequential simulation with n= " << n << " bodies" << std::endl;
     this->buildInteractionMatrix();
-    this->trajectory.addEntry(0,this->getSystem());
+    this->trajectory.addEntry(0, this->getSystem());
     for (int i = 0; i < steps; i++) {
         std::cout << "Begin Current system: " << this->getSystem() << std::endl;
         this->simulationStep(dt);
         std::cout << "End Current system: " << this->getSystem() << std::endl;
         std::cout << "-----------------------------" << std::endl;
-
+        this->trajectory.addEntry(i + 1, this->getSystem());
     }
+    this->trajectory.writeTrajectory();
 }
 
 
@@ -85,14 +86,15 @@ void SequentialSimulator::calculateForces() {
             double dist = this->distanceBetween(currentBody, (*it));
 
             totalFx += gravityConstant * (dX * (*it)->mass) /
-                       (pow(dist + dist + softeningConstant * softeningConstant, 3 / 2));
+                       (pow(dist * dist + softeningConstant * softeningConstant, 3 / 2));
             totalFy += gravityConstant * (dY * (*it)->mass) /
-                       (pow(dist + dist + softeningConstant * softeningConstant, 3 / 2));
+                       (pow(dist * dist + softeningConstant * softeningConstant, 3 / 2));
         }
         currentBody->fy = totalFy;
         currentBody->fx = totalFx;
     }
 }
+
 
 
 ParallelSimulator::ParallelSimulator(const NBodySystem &system) : Simulator(system) {}

@@ -8,6 +8,7 @@
 
 #include <string>
 #include <map>
+#include <ostream>
 #include "NBodySystem.h"
 #include "Point.h"
 
@@ -16,6 +17,10 @@ public:
     Trajectory(const std::string &filepath);
 
     void addEntry(int timestamp, NBodySystem system);
+
+    friend std::ostream &operator<<(std::ostream &os, const Trajectory &trajectory);
+
+    void writeTrajectory();
 
 private:
     std::string filepath;

@@ -18,3 +18,9 @@ double Point::getX() const {
 double Point::getY() const {
     return y;
 }
+
+
+std::ostream &operator<<(std::ostream &os, const Point &point) {
+    os << "id: " << point.id << " x: " << point.x << " y: " << point.y;
+    return os;
+}

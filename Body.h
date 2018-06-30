@@ -20,6 +20,7 @@ public:
     //Mass
     double mass = 0;
 
+    int id;
 
     Body(double px, double py, double vx, double vy, double mass);
 
@@ -45,8 +46,6 @@ public:
     friend std::ostream &operator<<(std::ostream &os, const Body &body);
 
 
-private:
-    int id;
 };
 
 
