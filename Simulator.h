@@ -7,6 +7,7 @@
 
 
 #include "NBodySystem.h"
+#include "Trajectory.h"
 #include <map>
 
 class Simulator {
@@ -32,6 +33,9 @@ private:
     double distanceBetween(Body *b1, Body *b2);
 
     std::vector<std::vector<Body * >> interactionMatrix;
+
+
+    Trajectory trajectory = Trajectory("./output.data");
 
     void simulationStep(double dt);
 

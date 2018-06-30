@@ -16,12 +16,14 @@ const NBodySystem &Simulator::getSystem() const {
 }
 
 
-SequentialSimulator::SequentialSimulator(const NBodySystem &system) : Simulator(system) {}
+SequentialSimulator::SequentialSimulator(const NBodySystem &system) : Simulator(system) {
+}
 
 void SequentialSimulator::run(int steps, double dt) {
     int n = this->getSystem().getSystemContent().size();
     std::cout << "Run sequential simulation with n= " << n << " bodies" << std::endl;
     this->buildInteractionMatrix();
+    this->trajectory.addEntry(0,this->getSystem());
     for (int i = 0; i < steps; i++) {
         std::cout << "Begin Current system: " << this->getSystem() << std::endl;
         this->simulationStep(dt);
