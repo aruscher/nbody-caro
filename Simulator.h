@@ -14,9 +14,11 @@ class Simulator {
 public:
     Simulator(NBodySystem system);
 
+
     virtual void run(int steps, double dt)= 0;
 
     const NBodySystem &getSystem() const;
+
 
 private:
     NBodySystem system;
@@ -25,6 +27,7 @@ private:
 
 class SequentialSimulator : public Simulator {
 public:
+
     SequentialSimulator(const NBodySystem &system);
 
     void run(int steps, double dt) override;
@@ -50,8 +53,8 @@ private:
 
 class ParallelSimulator : public Simulator {
 public:
-    ParallelSimulator(const NBodySystem &system);
 
+    ParallelSimulator(const NBodySystem &system);
 };
 
 #endif //NBODY_CARO_SIMULATOR_H

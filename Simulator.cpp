@@ -6,17 +6,13 @@
 #include <cmath>
 #include "Simulator.h"
 
-Simulator::Simulator(NBodySystem system) {
-    this->system = system;
-
-}
-
 const NBodySystem &Simulator::getSystem() const {
     return system;
 }
 
+Simulator::Simulator(NBodySystem system) {
+    this->system = system;
 
-SequentialSimulator::SequentialSimulator(const NBodySystem &system) : Simulator(system) {
 }
 
 void SequentialSimulator::run(int steps, double dt) {
@@ -95,6 +91,6 @@ void SequentialSimulator::calculateForces() {
     }
 }
 
-
-
 ParallelSimulator::ParallelSimulator(const NBodySystem &system) : Simulator(system) {}
+
+SequentialSimulator::SequentialSimulator(const NBodySystem &system) : Simulator(system) {}
