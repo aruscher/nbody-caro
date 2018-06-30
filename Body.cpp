@@ -80,10 +80,8 @@ bool Body::operator>=(const Body &rhs) const {
 void Body::update(double dt) {
     this->vx += dt * (this->fx / this->mass);
     this->vy += dt * (this->fy / this->mass);
-    double norm = sqrt(this->vy*this->vy+this->vx*this->vx);
-
-    this->px += dt * (this->vx/norm);
-    this->py += dt * (this->vy/norm);
+    this->px += dt * (this->vx);
+    this->py += dt * (this->vy);
     this->fx = 0;
     this->fy = 0;
 }

@@ -30,6 +30,6 @@ def animate(i):
 
 
 anim = animation.FuncAnimation(fig, animate, 
-                               frames=df["ts"].max(), interval=.5, blit=True)
-anim.save('basic_animation.mp4', fps=30, extra_args=['-vcodec', 'libx264'])
+                               frames=df["ts"].max(), interval=1, blit=True)
+#anim.save('basic_animation.mp4', fps=30, extra_args=['-vcodec', 'libx264'])
 plt.show()
