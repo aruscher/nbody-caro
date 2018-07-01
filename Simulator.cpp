@@ -232,13 +232,22 @@ void ParallelSimulator::calculateForces() {
     int n = systemContent.size();
     cl_int error;
 
+    std::vector<double> massBufferContent;
+    std::vector<double> xsBufferContent;
+    std::vector<double> ysBufferContent;
 
-    cl::Buffer massBuffer(context, CL_MEM_READ_ONLY   ,
-                          this->masses->size() * sizeof(double), (*this->masses).data(), &error);
-    cl::Buffer xsBuffer(context, CL_MEM_READ_ONLY  ,
-                        this->xs->size() * sizeof(double), (*this->xs).data(), &error);
-    cl::Buffer ysBuffer(context, CL_MEM_READ_ONLY  ,
-                        this->ys->size() * sizeof(double), (*this->ys).data(), &error);
+    for (int i = 0; i < n * n; i++) {
+        massBufferContent.push_back(this->masses->at(i));
+        xsBufferContent.push_back(this->xs->at(i));
+        ysBufferContent.push_back(this->ys->at(i));
+    }
+
+    cl::Buffer massBuffer(context, CL_MEM_READ_ONLY | CL_MEM_HOST_NO_ACCESS | CL_MEM_COPY_HOST_PTR,
+                          n * n * sizeof(double), massBufferContent.data(), &error);
+    cl::Buffer xsBuffer(context, CL_MEM_READ_ONLY | CL_MEM_HOST_NO_ACCESS | CL_MEM_COPY_HOST_PTR,
+                        n * n * sizeof(double), xsBufferContent.data(), &error);
+    cl::Buffer ysBuffer(context, CL_MEM_READ_ONLY | CL_MEM_HOST_NO_ACCESS | CL_MEM_COPY_HOST_PTR,
+                        n * n * sizeof(double), ysBufferContent.data(), &error);
 
 
     cl::Kernel bodyKernel(program, "calculateForces", &error);
@@ -248,7 +257,7 @@ void ParallelSimulator::calculateForces() {
     bodyKernel.setArg(3, n);
 
 
-    queue.enqueueNDRangeKernel(bodyKernel, cl::NullRange, cl::NDRange(n));
+    error = queue.enqueueNDRangeKernel(bodyKernel, cl::NullRange, cl::NDRange(n));
     queue.finish();
 }
 
