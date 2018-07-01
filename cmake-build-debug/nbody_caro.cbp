@@ -5,7 +5,7 @@
 		<Option title="nbody_caro"/>
 		<Option makefile_is_custom="1"/>
 		<Option compiler="gcc"/>
-		<Option virtualFolders="CMake Files\;"/>
+		<Option virtualFolders="CMake Files\;CMake Files\..\;CMake Files\..\..\;CMake Files\..\..\..\;CMake Files\..\..\..\..\;CMake Files\..\..\..\..\..\;CMake Files\..\..\..\..\..\..\;CMake Files\..\..\..\..\..\..\usr\;CMake Files\..\..\..\..\..\..\usr\share\;CMake Files\..\..\..\..\..\..\usr\share\opencv\;"/>
 		<Build>
 			<Target title="all">
 				<Option working_dir="/home/andreas/Dropbox/Programmierung/Cpp/nbody-caro/cmake-build-debug"/>
@@ -45,6 +45,7 @@
 				<Option compiler="gcc"/>
 				<Compiler>
 					<Add directory="/home/andreas/Dropbox/Programmierung/Cpp/nbody-caro"/>
+					<Add directory="/usr/include/opencv"/>
 					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.0/../../../../include/c++/8.1.0"/>
 					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.0/../../../../include/c++/8.1.0/x86_64-pc-linux-gnu"/>
 					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.0/../../../../include/c++/8.1.0/backward"/>
@@ -68,6 +69,7 @@
 				<Option compiler="gcc"/>
 				<Compiler>
 					<Add directory="/home/andreas/Dropbox/Programmierung/Cpp/nbody-caro"/>
+					<Add directory="/usr/include/opencv"/>
 					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.0/../../../../include/c++/8.1.0"/>
 					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.0/../../../../include/c++/8.1.0/x86_64-pc-linux-gnu"/>
 					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.0/../../../../include/c++/8.1.0/backward"/>
@@ -119,6 +121,18 @@
 		</Unit>
 		<Unit filename="/home/andreas/Dropbox/Programmierung/Cpp/nbody-caro/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/home/andreas/Dropbox/Programmierung/Cpp/nbody-caro/../../../../../../usr/share/opencv/OpenCVConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\usr\share\opencv\"/>
+		</Unit>
+		<Unit filename="/home/andreas/Dropbox/Programmierung/Cpp/nbody-caro/../../../../../../usr/share/opencv/OpenCVConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\usr\share\opencv\"/>
+		</Unit>
+		<Unit filename="/home/andreas/Dropbox/Programmierung/Cpp/nbody-caro/../../../../../../usr/share/opencv/OpenCVModules-release.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\usr\share\opencv\"/>
+		</Unit>
+		<Unit filename="/home/andreas/Dropbox/Programmierung/Cpp/nbody-caro/../../../../../../usr/share/opencv/OpenCVModules.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\usr\share\opencv\"/>
 		</Unit>
 	</Project>
 </CodeBlocks_project_file>

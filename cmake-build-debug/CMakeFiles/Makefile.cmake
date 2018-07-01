@@ -35,6 +35,10 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/opt/JetBrains/apps/CLion/ch-0/181.5281.33/bin/cmake/share/cmake-3.10/Modules/Platform/Linux.cmake"
   "/opt/JetBrains/apps/CLion/ch-0/181.5281.33/bin/cmake/share/cmake-3.10/Modules/Platform/UnixPaths.cmake"
   "/opt/JetBrains/apps/CLion/ch-0/181.5281.33/bin/cmake/share/cmake-3.10/Modules/ProcessorCount.cmake"
+  "/usr/share/opencv/OpenCVConfig-version.cmake"
+  "/usr/share/opencv/OpenCVConfig.cmake"
+  "/usr/share/opencv/OpenCVModules-release.cmake"
+  "/usr/share/opencv/OpenCVModules.cmake"
   )
 
 # The corresponding makefile is:

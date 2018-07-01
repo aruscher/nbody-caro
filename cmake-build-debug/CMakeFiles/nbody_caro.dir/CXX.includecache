@@ -59,6 +59,8 @@ Trajectory.h
 /home/andreas/Dropbox/Programmierung/Cpp/nbody-caro/Trajectory.h
 map
 -
+CL/cl2.hpp
+-
 
 /home/andreas/Dropbox/Programmierung/Cpp/nbody-caro/Trajectory.cpp
 fstream
@@ -81,12 +83,10 @@ Point.h
 /home/andreas/Dropbox/Programmierung/Cpp/nbody-caro/main.cpp
 iostream
 -
-ctime
+opencv2/core/core.hpp
 -
-Body.h
-/home/andreas/Dropbox/Programmierung/Cpp/nbody-caro/Body.h
-NBodySystem.h
-/home/andreas/Dropbox/Programmierung/Cpp/nbody-caro/NBodySystem.h
-Simulator.h
-/home/andreas/Dropbox/Programmierung/Cpp/nbody-caro/Simulator.h
+opencv2/highgui/highgui.hpp
+-
+CL/cl2.hpp
+-
 

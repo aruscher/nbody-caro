@@ -24,10 +24,5 @@ CMakeFiles/nbody_caro.dir/Trajectory.cpp.o: ../Point.h
 CMakeFiles/nbody_caro.dir/Trajectory.cpp.o: ../Trajectory.cpp
 CMakeFiles/nbody_caro.dir/Trajectory.cpp.o: ../Trajectory.h
 
-CMakeFiles/nbody_caro.dir/main.cpp.o: ../Body.h
-CMakeFiles/nbody_caro.dir/main.cpp.o: ../NBodySystem.h
-CMakeFiles/nbody_caro.dir/main.cpp.o: ../Point.h
-CMakeFiles/nbody_caro.dir/main.cpp.o: ../Simulator.h
-CMakeFiles/nbody_caro.dir/main.cpp.o: ../Trajectory.h
 CMakeFiles/nbody_caro.dir/main.cpp.o: ../main.cpp
 

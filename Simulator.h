@@ -9,6 +9,7 @@
 #include "NBodySystem.h"
 #include "Trajectory.h"
 #include <map>
+#include <CL/cl2.hpp>
 
 class Simulator {
 public:
@@ -32,7 +33,6 @@ public:
 
     void run(int steps, double dt) override;
 
-    void writeTrajectory();
 
 private:
     double distanceBetween(Body *b1, Body *b2);
@@ -53,8 +53,28 @@ private:
 
 class ParallelSimulator : public Simulator {
 public:
-
     ParallelSimulator(const NBodySystem &system);
+
+    void run(int steps, double dt) override;
+
+    void setupOpenCL();
+
+    std::string loadKernelCode();
+
+    void simulationStep(double d);
+
+    void calculateInteractionBuffer();
+
+    void calculateForces();
+
+    void updateBodies();
+
+    double *bodyToDouble3(Body *&pBody);
+
+
+    std::vector<double>* masses;
+    std::vector<double>* xs;
+    std::vector<double>* ys;
 };
 
 #endif //NBODY_CARO_SIMULATOR_H
