@@ -18,11 +18,14 @@ int main() {
     double vRange[] = {0, 0};
     double massRange[] = {1, 10};
 //
-    int nBodies = 2;
-    for (int i = 0; i < nBodies; i++) {
-        sy.addRandomBody(i, xRange, yRange, vRange, massRange);
-    }
-
+//    int nBodies = 2;
+//    for (int i = 0; i < nBodies; i++) {
+//        sy.addRandomBody(i, xRange, yRange, vRange, massRange);
+//    }
+    Body b1(0, 1, 0, 0, 1);
+    Body b2(0, 1, 0, 0, 1);
+    sy.addBody(&b1);
+    sy.addBody(&b2);
 //    SequentialSimulator sim(sy);
     ParallelSimulator sim(sy);
 
