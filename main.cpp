@@ -18,22 +18,25 @@ int main() {
     double vRange[] = {0, 0};
     double massRange[] = {1, 10};
 //
-//    int nBodies = 2;
-//    for (int i = 0; i < nBodies; i++) {
-//        sy.addRandomBody(i, xRange, yRange, vRange, massRange);
-//    }
-    Body b1(0, 1, 0, 0, 1);
-    Body b2(0, 1, 0, 0, 1);
-    sy.addBody(&b1);
-    sy.addBody(&b2);
-//    SequentialSimulator sim(sy);
-    ParallelSimulator sim(sy);
-
+    int nBodies = 2000;
+    for (int i = 0; i < nBodies; i++) {
+        sy.addRandomBody(i, xRange, yRange, vRange, massRange);
+    }
+    SequentialSimulator sim(sy);
     clock_t start = clock();
-    cout << "Start simulation" << endl;
-    sim.run(5, 100000);
+    cout << "Start sequential simulation" << endl;
+    sim.run(100, 100000);
     cout << "Complete Simulation" << endl;
     int ms = (std::clock() - start) / (double) (CLOCKS_PER_SEC / 1000);
+    cout << "Took " << ms << " milliseconds" << endl;
+
+
+    ParallelSimulator psim(sy);
+    start = clock();
+    cout << "Start parallel simulation" << endl;
+    psim.run(100, 100000);
+    cout << "Complete Simulation" << endl;
+    ms = (std::clock() - start) / (double) (CLOCKS_PER_SEC / 1000);
     cout << "Took " << ms << " milliseconds" << endl;
 
     return 0;

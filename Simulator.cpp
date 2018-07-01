@@ -100,19 +100,27 @@ ParallelSimulator::ParallelSimulator(const NBodySystem &system) : Simulator(syst
 
 void ParallelSimulator::run(int steps, double dt) {
 //    this->setupOpenCL();
+    this->trajectory.addEntry(0, this->getSystem());
+
     for (int i = 0; i < steps; i++) {
+        std::cout << "Calculate " << i << "/" << steps << std::endl;
+
         this->simulationStep(dt);
+        this->trajectory.addEntry(i + 1, this->getSystem());
+
     }
+    this->trajectory.writeTrajectory();
+
     //1.) calculate forces in parallel
 
 
     //2.) update bodies sequential
 }
 
-void ParallelSimulator::simulationStep(double d) {
+void ParallelSimulator::simulationStep(double dt) {
     this->calculateInteractionBuffer();
     this->calculateForces();
-    this->updateBodies();
+    this->updateBodies(dt);
 }
 
 
@@ -159,34 +167,33 @@ std::string ParallelSimulator::loadKernelCode() {
                     double soft = 0.1;
                     double gravityConstant = 6.674e-11;
                     double dP = b2p - b1p;
-                    double up = dP*b2m;
-                    //printf("dist %d",dist);
-                    //double innerSqrt = dist*dist+soft*soft;
-                    return 0;
+                    double force = gravityConstant * (dP * b2m) /
+                       (pow(dist * dist + soft * soft, 3 / 2));
+                    return force;
                 };
 
-                kernel void calculateForces(global double *masses, global double *xs, global  double *ys, int  n) {
+                kernel void calculateForces(global double *masses, global double *xs, global  double *ys, int  n, global double *fxOut, global double *fyOut) {
                     size_t id =  get_global_id(0);
-                    printf("Kernel Id: %d\n",id);
+//                    printf("Kernel Id: %d\n",id);
                     double totalFx = 0;
                     double totalFy = 0;
                     int start = id*n;
                     int end  = start+n;
-                    printf("Run from %d - %d\n",start,end);
                     double currentBodyX = xs[start];
                     double currentBodyY = xs[start];
                     double currentBodyMass = masses[start];
-                    printf("Current body: %d %d %d\n", currentBodyX, currentBodyY, currentBodyMass);
-//                    for(int i = start+1;i<end;i++){
-//                        double otherBodyX = xs[i];
-//                        double otherBodyY = ys[i];
-//                        double otherBodyM = masses[i];
-//                        double dist = calculateDistance(currentBodyX,currentBodyY, otherBodyX, otherBodyY);
-//                        printf("Dist %d\n",dist);
-//                        //totalFx += calculateForce(dist,currentBodyX,otherBodyX,otherBodyM);
-//                        //totalFy += calculateForce(dist,currentBodyY,otherBodyY,otherBodyM);
-//                    }
-//                    printf("Total Force for Body %d: FX %d FY %d\n", id, totalFx,totalFy);
+//                    printf("Current body: %e %e %e\n", currentBodyX, currentBodyY, currentBodyMass);
+                    for(int i = start+1;i<end;i++){
+                        double otherBodyX = xs[i];
+                        double otherBodyY = ys[i];
+                        double otherBodyM = masses[i];
+                        double dist = calculateDistance(currentBodyX,currentBodyY, otherBodyX, otherBodyY);
+                        totalFx += calculateForce(dist,currentBodyX,otherBodyX,otherBodyM);
+                        totalFy += calculateForce(dist,currentBodyY,otherBodyY,otherBodyM);
+                    }
+//                    printf("Total Force for Body %d: FX %e FY %e\n", id, totalFx,totalFy);
+                    fxOut[start] = totalFx;
+                    fyOut[start] = totalFy;
                 };
 
 
@@ -203,7 +210,7 @@ void ParallelSimulator::calculateForces() {
         exit(1);
     }
     cl::Platform default_platform = all_platforms[0];
-    std::cout << "Using platform: " << default_platform.getInfo<CL_PLATFORM_NAME>() << "\n";
+//    std::cout << "Using platform: " << default_platform.getInfo<CL_PLATFORM_NAME>() << "\n";
 
     // get default device (CPUs, GPUs) of the default platform
     std::vector<cl::Device> all_devices;
@@ -213,7 +220,7 @@ void ParallelSimulator::calculateForces() {
         exit(1);
     }
     cl::Device default_device = all_devices[0];
-    std::cout << "Using device: " << default_device.getInfo<CL_DEVICE_NAME>() << "\n";
+//    std::cout << "Using device: " << default_device.getInfo<CL_DEVICE_NAME>() << "\n";
     cl::Context context({default_device});
     cl::Program::Sources sources;
     std::string kernelCode = this->loadKernelCode();
@@ -232,42 +239,64 @@ void ParallelSimulator::calculateForces() {
     int n = systemContent.size();
     cl_int error = 0;
 
-    double massToBuffer[n * n] = {0};
-    double xsToBuffer[n * n] = {0};
-    double ysToBuffer[n * n] = {0};
+    double *massToBuffer = new double[n * n]();
+    double *xsToBuffer = new double[n * n]();
+    double *ysToBuffer = new double[n * n]();
+
 
     for (int i = 0; i < n * n; i++) {
-        xsToBuffer[i] = this->xs->at(i);
-        ysToBuffer[i] = this->ys->at(i);
-        massToBuffer[i] = this->masses->at(i);
+        xsToBuffer[i] = (*this->xs).at(i);
+        ysToBuffer[i] = (*this->ys).at(i);
+        massToBuffer[i] = (*this->masses).at(i);
     }
 
     size_t size = n * n * sizeof(double);
 
-    cl::Buffer massBuffer(context, CL_MEM_READ_WRITE | CL_MEM_HOST_READ_ONLY,
-                          size);
-    cl::Buffer xsBuffer(context, CL_MEM_READ_WRITE | CL_MEM_HOST_READ_ONLY,
-                        size);
-    cl::Buffer ysBuffer(context, CL_MEM_READ_WRITE | CL_MEM_HOST_READ_ONLY,
-                        size);
+    cl::Buffer massBuffer(context, CL_MEM_READ_WRITE,
+                          size, massToBuffer);
+    cl::Buffer xsBuffer(context, CL_MEM_READ_WRITE,
+                        size, xsToBuffer);
+    cl::Buffer ysBuffer(context, CL_MEM_READ_WRITE,
+                        size, ysToBuffer);
 
-    error = queue.enqueueWriteBuffer(massBuffer, CL_TRUE, 0, size, massToBuffer);
-    error = queue.enqueueWriteBuffer(xsBuffer, CL_TRUE, 0, size, xsToBuffer);
-    error = queue.enqueueWriteBuffer(ysBuffer, CL_TRUE, 0, size, ysToBuffer);
+    double *fxFromBuffer = new double[n]();
+    double *fyFromBuffer = new double[n]();
+    cl::Buffer fxBuffer(context, CL_MEM_READ_WRITE,
+                        size, fxFromBuffer);
+    cl::Buffer fyBuffer(context, CL_MEM_READ_WRITE,
+                        size, fyFromBuffer);
+
+    queue.enqueueWriteBuffer(massBuffer, CL_TRUE, 0, size, massToBuffer);
+    queue.enqueueWriteBuffer(xsBuffer, CL_TRUE, 0, n * sizeof(double), xsToBuffer);
+    queue.enqueueWriteBuffer(ysBuffer, CL_TRUE, 0, n * sizeof(double), ysToBuffer);
+    queue.enqueueWriteBuffer(fxBuffer, CL_TRUE, 0, sizeof(float) * n, fxFromBuffer);
+    queue.enqueueWriteBuffer(fyBuffer, CL_TRUE, 0, sizeof(float) * n, fyFromBuffer);
 
     cl::Kernel bodyKernel(program, "calculateForces", &error);
     error = bodyKernel.setArg(0, massBuffer);
     error = bodyKernel.setArg(1, xsBuffer);
     error = bodyKernel.setArg(2, ysBuffer);
     error = bodyKernel.setArg(3, n);
+    error = bodyKernel.setArg(4, fxBuffer);
+    error = bodyKernel.setArg(5, fyBuffer);
 
 
     error = queue.enqueueNDRangeKernel(bodyKernel, cl::NullRange, cl::NDRange(n));
+    queue.enqueueReadBuffer(fxBuffer, CL_TRUE, 0, n * sizeof(double), fxFromBuffer);
+    queue.enqueueReadBuffer(fyBuffer, CL_TRUE, 0, n * sizeof(double), fxFromBuffer);
     queue.finish();
+    for (int i = 0; i < n; i++) {
+        Body *currentBody = systemContent.at(i);
+        currentBody->fx = fxFromBuffer[i];
+        currentBody->fy = fxFromBuffer[i];
+    }
 }
 
-void ParallelSimulator::updateBodies() {
-
+void ParallelSimulator::updateBodies(double dt) {
+    std::vector<Body *> systemContent = this->getSystem().getSystemContent();
+    for (auto &body: systemContent) {
+        body->update(dt);
+    }
 }
 
 double *ParallelSimulator::bodyToDouble3(Body *&pBody) {

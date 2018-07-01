@@ -32,6 +32,7 @@ public:
     SequentialSimulator(const NBodySystem &system);
 
     void run(int steps, double dt) override;
+    Trajectory trajectory = Trajectory("/home/andreas/Dropbox/Programmierung/Cpp/nbody-caro/output.data");
 
 
 private:
@@ -39,8 +40,6 @@ private:
 
     std::vector<std::vector<Body * >> interactionMatrix;
 
-
-    Trajectory trajectory = Trajectory("/home/andreas/Dropbox/Programmierung/Cpp/nbody-caro/output.data");
 
     void simulationStep(double dt);
 
@@ -67,7 +66,7 @@ public:
 
     void calculateForces();
 
-    void updateBodies();
+    void updateBodies(double dt);
 
     double *bodyToDouble3(Body *&pBody);
 
@@ -78,6 +77,8 @@ public:
     cl::Context context;
     cl::Program program;
     cl::CommandQueue queue;
+    Trajectory trajectory = Trajectory("/home/andreas/Dropbox/Programmierung/Cpp/nbody-caro/output.data");
+
 };
 
 #endif //NBODY_CARO_SIMULATOR_H
