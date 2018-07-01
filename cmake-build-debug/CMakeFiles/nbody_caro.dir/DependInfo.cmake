@@ -4,12 +4,12 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/andreas/Dropbox/Programmierung/Cpp/nbody-caro/Body.cpp" "/home/andreas/Dropbox/Programmierung/Cpp/nbody-caro/cmake-build-debug/CMakeFiles/nbody_caro.dir/Body.cpp.o"
-  "/home/andreas/Dropbox/Programmierung/Cpp/nbody-caro/NBodySystem.cpp" "/home/andreas/Dropbox/Programmierung/Cpp/nbody-caro/cmake-build-debug/CMakeFiles/nbody_caro.dir/NBodySystem.cpp.o"
-  "/home/andreas/Dropbox/Programmierung/Cpp/nbody-caro/Point.cpp" "/home/andreas/Dropbox/Programmierung/Cpp/nbody-caro/cmake-build-debug/CMakeFiles/nbody_caro.dir/Point.cpp.o"
-  "/home/andreas/Dropbox/Programmierung/Cpp/nbody-caro/Simulator.cpp" "/home/andreas/Dropbox/Programmierung/Cpp/nbody-caro/cmake-build-debug/CMakeFiles/nbody_caro.dir/Simulator.cpp.o"
-  "/home/andreas/Dropbox/Programmierung/Cpp/nbody-caro/Trajectory.cpp" "/home/andreas/Dropbox/Programmierung/Cpp/nbody-caro/cmake-build-debug/CMakeFiles/nbody_caro.dir/Trajectory.cpp.o"
-  "/home/andreas/Dropbox/Programmierung/Cpp/nbody-caro/main.cpp" "/home/andreas/Dropbox/Programmierung/Cpp/nbody-caro/cmake-build-debug/CMakeFiles/nbody_caro.dir/main.cpp.o"
+  "/home/andreas/CLionProjects/nbody-caro/Body.cpp" "/home/andreas/CLionProjects/nbody-caro/cmake-build-debug/CMakeFiles/nbody_caro.dir/Body.cpp.o"
+  "/home/andreas/CLionProjects/nbody-caro/NBodySystem.cpp" "/home/andreas/CLionProjects/nbody-caro/cmake-build-debug/CMakeFiles/nbody_caro.dir/NBodySystem.cpp.o"
+  "/home/andreas/CLionProjects/nbody-caro/Point.cpp" "/home/andreas/CLionProjects/nbody-caro/cmake-build-debug/CMakeFiles/nbody_caro.dir/Point.cpp.o"
+  "/home/andreas/CLionProjects/nbody-caro/Simulator.cpp" "/home/andreas/CLionProjects/nbody-caro/cmake-build-debug/CMakeFiles/nbody_caro.dir/Simulator.cpp.o"
+  "/home/andreas/CLionProjects/nbody-caro/Trajectory.cpp" "/home/andreas/CLionProjects/nbody-caro/cmake-build-debug/CMakeFiles/nbody_caro.dir/Trajectory.cpp.o"
+  "/home/andreas/CLionProjects/nbody-caro/main.cpp" "/home/andreas/CLionProjects/nbody-caro/cmake-build-debug/CMakeFiles/nbody_caro.dir/main.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
