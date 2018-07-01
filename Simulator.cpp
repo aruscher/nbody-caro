@@ -204,21 +204,21 @@ void ParallelSimulator::calculateForces() {
     double *xs = this->xs->data();
     double *ys = this->ys->data();
 
-//    cl::Buffer massBuffer(context, CL_MEM_READ_WRITE | CL_MEM_HOST_READ_ONLY | CL_MEM_COPY_HOST_PTR,
-//                          n * n * sizeof(double));
-//    cl::Buffer xsBuffer(context, CL_MEM_READ_WRITE | CL_MEM_HOST_READ_ONLY | CL_MEM_COPY_HOST_PTR,
-//                        n * n * sizeof(double));
-//    cl::Buffer ysBuffer(context, CL_MEM_READ_WRITE | CL_MEM_HOST_READ_ONLY | CL_MEM_COPY_HOST_PTR,
-//                        n * n * sizeof(double));
-    cl::Kernel bodyKernel(program, "debug");
-//    bodyKernel.setArg(0, massBuffer);
-//    bodyKernel.setArg(1, xsBuffer);
-//    bodyKernel.setArg(2, ysBuffer);
-////
-//    queue.enqueueWriteBuffer(massBuffer, CL_TRUE, 0, n * n * sizeof(double), masses);
-//    queue.enqueueWriteBuffer(xsBuffer, CL_TRUE, 0, n * n * sizeof(double), xs);
-//    queue.enqueueWriteBuffer(ysBuffer, CL_TRUE, 0, n * n * sizeof(double), ys);
-    queue.enqueueNDRangeKernel(bodyKernel, cl::NullRange, cl::NDRange(n));
+    cl::Buffer massBuffer(context, CL_MEM_READ_WRITE | CL_MEM_HOST_READ_ONLY | CL_MEM_COPY_HOST_PTR,
+                          n * n * sizeof(double));
+    cl::Buffer xsBuffer(context, CL_MEM_READ_WRITE | CL_MEM_HOST_READ_ONLY | CL_MEM_COPY_HOST_PTR,
+                        n * n * sizeof(double));
+    cl::Buffer ysBuffer(context, CL_MEM_READ_WRITE | CL_MEM_HOST_READ_ONLY | CL_MEM_COPY_HOST_PTR,
+                        n * n * sizeof(double));
+    cl::Kernel bodyKernel(program, "calculateForces");
+    bodyKernel.setArg(0, massBuffer);
+    bodyKernel.setArg(1, xsBuffer);
+    bodyKernel.setArg(2, ysBuffer);
+//
+    queue.enqueueWriteBuffer(massBuffer, CL_TRUE, 0, n * n * sizeof(double), masses);
+    queue.enqueueWriteBuffer(xsBuffer, CL_TRUE, 0, n * n * sizeof(double), xs);
+    queue.enqueueWriteBuffer(ysBuffer, CL_TRUE, 0, n * n * sizeof(double), ys);
+    queue.enqueueNDRangeKernel(bodyKernel, cl::NullRange, cl::NDRange(n,n));
     queue.finish();
 }
 
