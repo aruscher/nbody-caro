@@ -13,8 +13,8 @@ using namespace std;
 int main() {
     cout << "Hello, World!" << endl;
     NBodySystem sy;
-    double xRange[] = {-10000, 10000};
-    double yRange[] = {-10000, 10000};
+    double xRange[] = {-10, 10};
+    double yRange[] = {-10, 10};
     double vRange[] = {0, 0};
     double massRange[] = {1, 10};
 //
@@ -28,7 +28,7 @@ int main() {
 
     clock_t start = clock();
     cout << "Start simulation" << endl;
-    sim.run(100000, 100000);
+    sim.run(5, 100000);
     cout << "Complete Simulation" << endl;
     int ms = (std::clock() - start) / (double) (CLOCKS_PER_SEC / 1000);
     cout << "Took " << ms << " milliseconds" << endl;

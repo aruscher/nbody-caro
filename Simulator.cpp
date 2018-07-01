@@ -99,6 +99,7 @@ SequentialSimulator::SequentialSimulator(const NBodySystem &system) : Simulator(
 ParallelSimulator::ParallelSimulator(const NBodySystem &system) : Simulator(system) {}
 
 void ParallelSimulator::run(int steps, double dt) {
+//    this->setupOpenCL();
     for (int i = 0; i < steps; i++) {
         this->simulationStep(dt);
     }
@@ -112,23 +113,6 @@ void ParallelSimulator::simulationStep(double d) {
     this->calculateInteractionBuffer();
     this->calculateForces();
     this->updateBodies();
-}
-
-
-std::string ParallelSimulator::loadKernelCode() {
-    std::string kernelCode{R"CLC(
-                __kernel void calculateForces(__global const double* masses, __global const double* xs, __global const double* ys) {
-                    size_t id = (get_global_id(1) * get_global_size(0)) + get_global_id(0);
-                    printf("Kernel Id: %d\n",id);
-               };
-
-                __kernel void debug(){
-                    size_t id = (get_global_id(1) * get_global_size(0)) + get_global_id(0);
-                    printf("Kernel Id: %d\n",id);
-                };
-
-      )CLC"};
-    return kernelCode;
 }
 
 
@@ -163,6 +147,53 @@ void ParallelSimulator::calculateInteractionBuffer() {
 
 }
 
+std::string ParallelSimulator::loadKernelCode() {
+    std::string kernelCode{R"CLC(
+                double calculateDistance(double b1x, double b1y, double b2x, double b2y){
+                    double dx = b1x-b2x;
+                    double dy = b1y-b2y;
+                    return sqrt(dx*dx+dy*dy);
+                };
+
+                double calculateForce(double dist, double b1p, double b2p, double b2m){
+                    double soft = 0.1;
+                    double gravityConstant = 6.674e-11;
+                    double dP = b2p - b1p;
+                    double up = dP*b2m;
+                    //printf("dist %d",dist);
+                    //double innerSqrt = dist*dist+soft*soft;
+                    return 0;
+                };
+
+                __kernel void calculateForces(__global double* masses, __global double* xs, __global  double* ys, int  n) {
+                    size_t id =  get_global_id(0);
+                    printf("Kernel Id: %d\n",id);
+                    double totalFx = 0;
+                    double totalFy = 0;
+                    int start = id*n;
+                    int end  = id*n+n;
+                    printf("Run from %d - %d\n",start,end);
+                    double currentBodyX = xs[start];
+                    double currentBodyY = xs[start];
+                    double currentBodyMass = masses[start];
+                    printf("Current body: %d %d %d\n", currentBodyX, currentBodyY, currentBodyMass);
+                    for(int i = start+1;i<end;i++){
+                        double otherBodyX = xs[i];
+                        double otherBodyY = ys[i];
+                        double otherBodyM = masses[i];
+                        double dist = calculateDistance(currentBodyX,currentBodyY, otherBodyX, otherBodyY);
+                        printf("Dist %d\n",dist);
+                        //totalFx += calculateForce(dist,currentBodyX,otherBodyX,otherBodyM);
+                        //totalFy += calculateForce(dist,currentBodyY,otherBodyY,otherBodyM);
+                    }
+                    printf("Total Force for Body %d: FX %d FY %d\n", id, totalFx,totalFy);
+                };
+
+
+      )CLC"};
+    return kernelCode;
+}
+
 void ParallelSimulator::calculateForces() {
     std::vector<cl::Platform> all_platforms;
     cl::Platform::get(&all_platforms);
@@ -192,33 +223,32 @@ void ParallelSimulator::calculateForces() {
 
 
     cl::Program program(context, sources);
-    if (program.build({default_device}) != CL_SUCCESS) {
-        std::cout << "Error building: " << program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(default_device) << std::endl;
+    if ((program).build({default_device}) != CL_SUCCESS) {
+        std::cout << "Error building: " << (program).getBuildInfo<CL_PROGRAM_BUILD_LOG>(default_device) << std::endl;
         exit(1);
     }
 
-
     std::vector<Body *> systemContent = this->getSystem().getSystemContent();
     int n = systemContent.size();
-    double *masses = this->masses->data();
-    double *xs = this->xs->data();
-    double *ys = this->ys->data();
+    cl_int error;
 
-    cl::Buffer massBuffer(context, CL_MEM_READ_WRITE | CL_MEM_HOST_READ_ONLY | CL_MEM_COPY_HOST_PTR,
-                          n * n * sizeof(double));
-    cl::Buffer xsBuffer(context, CL_MEM_READ_WRITE | CL_MEM_HOST_READ_ONLY | CL_MEM_COPY_HOST_PTR,
-                        n * n * sizeof(double));
-    cl::Buffer ysBuffer(context, CL_MEM_READ_WRITE | CL_MEM_HOST_READ_ONLY | CL_MEM_COPY_HOST_PTR,
-                        n * n * sizeof(double));
-    cl::Kernel bodyKernel(program, "calculateForces");
+
+    cl::Buffer massBuffer(context, CL_MEM_READ_ONLY   ,
+                          this->masses->size() * sizeof(double), (*this->masses).data(), &error);
+    cl::Buffer xsBuffer(context, CL_MEM_READ_ONLY  ,
+                        this->xs->size() * sizeof(double), (*this->xs).data(), &error);
+    cl::Buffer ysBuffer(context, CL_MEM_READ_ONLY  ,
+                        this->ys->size() * sizeof(double), (*this->ys).data(), &error);
+
+
+    cl::Kernel bodyKernel(program, "calculateForces", &error);
     bodyKernel.setArg(0, massBuffer);
     bodyKernel.setArg(1, xsBuffer);
     bodyKernel.setArg(2, ysBuffer);
-//
-    queue.enqueueWriteBuffer(massBuffer, CL_TRUE, 0, n * n * sizeof(double), masses);
-    queue.enqueueWriteBuffer(xsBuffer, CL_TRUE, 0, n * n * sizeof(double), xs);
-    queue.enqueueWriteBuffer(ysBuffer, CL_TRUE, 0, n * n * sizeof(double), ys);
-    queue.enqueueNDRangeKernel(bodyKernel, cl::NullRange, cl::NDRange(n,n));
+    bodyKernel.setArg(3, n);
+
+
+    queue.enqueueNDRangeKernel(bodyKernel, cl::NullRange, cl::NDRange(n));
     queue.finish();
 }
 
@@ -231,5 +261,44 @@ double *ParallelSimulator::bodyToDouble3(Body *&pBody) {
     double px = pBody->px;
     double py = pBody->py;
     return new double[3]{mass, px, py};;
+}
+
+void ParallelSimulator::setupOpenCL() {
+    std::vector<cl::Platform> all_platforms;
+    cl::Platform::get(&all_platforms);
+
+    if (all_platforms.size() == 0) {
+        std::cout << " No platforms found. Check OpenCL installation!\n";
+        exit(1);
+    }
+    cl::Platform default_platform = all_platforms[0];
+    std::cout << "Using platform: " << default_platform.getInfo<CL_PLATFORM_NAME>() << "\n";
+
+    // get default device (CPUs, GPUs) of the default platform
+    std::vector<cl::Device> all_devices;
+    default_platform.getDevices(CL_DEVICE_TYPE_ALL, &all_devices);
+    if (all_devices.size() == 0) {
+        std::cout << " No devices found. Check OpenCL installation!\n";
+        exit(1);
+    }
+    cl::Device default_device = all_devices[0];
+    std::cout << "Using device: " << default_device.getInfo<CL_DEVICE_NAME>() << "\n";
+    cl::Context *context = new cl::Context({default_device});
+    cl::Program::Sources sources;
+    std::string kernelCode = this->loadKernelCode();
+    sources.push_back({kernelCode.c_str(), kernelCode.length()});
+
+    cl::CommandQueue *queue = new cl::CommandQueue(*context, default_device);
+
+
+    cl::Program *program = new cl::Program(*context, sources);
+    if ((*program).build({default_device}) != CL_SUCCESS) {
+        std::cout << "Error building: " << (*program).getBuildInfo<CL_PROGRAM_BUILD_LOG>(default_device) << std::endl;
+        exit(1);
+    }
+
+    this->context = *context;
+    this->program = *program;
+    this->queue = *queue;
 }
 

@@ -1,3 +1,3 @@
-/home/andreas/CLionProjects/nbody-caro/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/andreas/CLionProjects/nbody-caro/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/andreas/CLionProjects/nbody-caro/cmake-build-debug/CMakeFiles/nbody_caro.dir
+/home/andreas/Dropbox/Programmierung/Cpp/nbody-caro/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/andreas/Dropbox/Programmierung/Cpp/nbody-caro/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/andreas/Dropbox/Programmierung/Cpp/nbody-caro/cmake-build-debug/CMakeFiles/nbody_caro.dir

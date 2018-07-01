@@ -9,7 +9,7 @@
 #include "NBodySystem.h"
 #include "Trajectory.h"
 #include <map>
-#include <CL/cl2.hpp>
+#include <CL/cl.hpp>
 
 class Simulator {
 public:
@@ -72,9 +72,12 @@ public:
     double *bodyToDouble3(Body *&pBody);
 
 
-    std::vector<double>* masses;
-    std::vector<double>* xs;
-    std::vector<double>* ys;
+    std::vector<double> *masses;
+    std::vector<double> *xs;
+    std::vector<double> *ys;
+    cl::Context context;
+    cl::Program program;
+    cl::CommandQueue queue;
 };
 
 #endif //NBODY_CARO_SIMULATOR_H
