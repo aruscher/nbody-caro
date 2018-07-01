@@ -232,9 +232,9 @@ void ParallelSimulator::calculateForces() {
     int n = systemContent.size();
     cl_int error = 0;
 
-    double massToBuffer[n * n];
-    double xsToBuffer[n * n];
-    double ysToBuffer[n * n];
+    double massToBuffer[n * n] = {0};
+    double xsToBuffer[n * n] = {0};
+    double ysToBuffer[n * n] = {0};
 
     for (int i = 0; i < n * n; i++) {
         xsToBuffer[i] = this->xs->at(i);
@@ -244,11 +244,11 @@ void ParallelSimulator::calculateForces() {
 
     size_t size = n * n * sizeof(double);
 
-    cl::Buffer massBuffer(context, CL_MEM_READ_WRITE | CL_MEM_HOST_READ_ONLY | CL_MEM_COPY_HOST_PTR,
+    cl::Buffer massBuffer(context, CL_MEM_READ_WRITE | CL_MEM_HOST_READ_ONLY,
                           size);
-    cl::Buffer xsBuffer(context, CL_MEM_READ_WRITE | CL_MEM_HOST_READ_ONLY | CL_MEM_COPY_HOST_PTR,
+    cl::Buffer xsBuffer(context, CL_MEM_READ_WRITE | CL_MEM_HOST_READ_ONLY,
                         size);
-    cl::Buffer ysBuffer(context, CL_MEM_READ_WRITE | CL_MEM_HOST_READ_ONLY | CL_MEM_COPY_HOST_PTR,
+    cl::Buffer ysBuffer(context, CL_MEM_READ_WRITE | CL_MEM_HOST_READ_ONLY,
                         size);
 
     error = queue.enqueueWriteBuffer(massBuffer, CL_TRUE, 0, size, massToBuffer);
